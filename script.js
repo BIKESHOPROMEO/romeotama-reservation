@@ -50,6 +50,10 @@ document.addEventListener("DOMContentLoaded", () => {
   headerRow.appendChild(th);
 });
 
+thead.appendChild(headerRow); // ? これが必要！
+table.appendChild(thead);
+
+
     const tbody = document.createElement("tbody");
     hours.forEach(hour => {
       const row = document.createElement("tr");
