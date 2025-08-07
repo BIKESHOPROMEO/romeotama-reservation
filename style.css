@@ -1,0 +1,46 @@
+body {
+  font-family: sans-serif;
+  padding: 1em;
+  background-color: #f9f9f9;
+}
+
+h1 {
+  text-align: center;
+  font-size: 1.2em;
+  margin-bottom: 1em;
+}
+
+#calendar {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 600px;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  text-align: center;
+  padding: 0.5em;
+}
+
+td.available {
+  background-color: #d4fcd4;
+  cursor: pointer;
+}
+
+td.unavailable {
+  background-color: #fcd4d4;
+}
+
+.hidden {
+  display: none;
+}
+
+@media (max-width: 600px) {
+  table {
+    font-size: 0.8em;
+  }
+}
