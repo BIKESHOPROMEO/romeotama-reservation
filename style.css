@@ -2,6 +2,8 @@ body {
   font-family: sans-serif;
   padding: 1em;
   background-color: #f9f9f9;
+  max-width: 1200px;
+  margin: auto;
 }
 
 h1 {
@@ -10,19 +12,24 @@ h1 {
 }
 
 .nav-buttons {
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  gap: 1em;
   margin-bottom: 1em;
+  position: relative;
+  z-index: 10;
 }
 
 .nav-buttons button {
-  margin: 0 0.5em;
+  margin: 0;
   padding: 0.5em 1em;
-  font-size: 1em;
+  font-size: 1.1rem;
   border: none;
   background-color: #0078d4;
   color: white;
   border-radius: 4px;
   cursor: pointer;
+  touch-action: manipulation;
 }
 
 .nav-buttons button:hover {
@@ -33,6 +40,7 @@ table {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: 1em;
+  font-size: 1rem;
 }
 
 th, td {
@@ -47,7 +55,9 @@ th, td {
 }
 
 .available:hover {
-  background-color: #b2ebf2;
+  background-color: #80deea;
+  font-weight: bold;
+  border: 2px solid #0078d4;
 }
 
 .hidden {
