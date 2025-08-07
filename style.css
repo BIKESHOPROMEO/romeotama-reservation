@@ -84,14 +84,14 @@ th, td {
 }
 
 /* テーブル全体のスタイル */
-table {
+#calendar table {
   border-collapse: collapse;
   width: max-content; /* 内容に応じて横幅を広げる */
   min-width: 700px;    /* スマホでスクロールが発生するサイズ */
 }
 
 /* セルの基本スタイル */
-th, td {
+#calendar th, td {
   border: 1px solid #ccc;
   padding: 0.5em;
   text-align: center;
@@ -99,10 +99,36 @@ th, td {
 }
 
 /* ?? 時間列（左端）を固定 */
-th:first-child,
-td:first-child {
+#calendar th:first-child,
+#calendar td:first-child {
   position: sticky;
   left: 0;
   background-color: #fff; /* 固定列の背景色（スクロール時に重なりを防ぐ） */
+  z-index: 2;
+}
+
+#calendar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#calendar table {
+  border-collapse: collapse;
+  width: max-content;
+  min-width: 700px;
+}
+
+#calendar th, #calendar td {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+#calendar th:first-child,
+#calendar td:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #fff;
   z-index: 2;
 }
