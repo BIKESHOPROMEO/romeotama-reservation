@@ -107,3 +107,17 @@ th, td {
   background-color: #fff;
   z-index: 2;
 }
+
+.unavailable {
+  background-color: #eee;
+  color: #999;
+  cursor: not-allowed;
+}
+
+th.sunday {
+  color: red;
+}
+
+th.saturday {
+  color: blue;
+}

@@ -39,12 +39,16 @@ document.addEventListener("DOMContentLoaded", () => {
     headerRow.appendChild(document.createElement("th"));
 
     dates.forEach(d => {
-      const th = document.createElement("th");
-      th.textContent = d.label;
-      headerRow.appendChild(th);
-    });
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
+  const th = document.createElement("th");
+  th.textContent = d.label;
+
+  // ?? 曜日ごとにクラスを追加
+  const dayOfWeek = new Date(d.date).getDay();
+  if (dayOfWeek === 0) th.classList.add("sunday");     // 日曜
+  else if (dayOfWeek === 6) th.classList.add("saturday"); // 土曜
+
+  headerRow.appendChild(th);
+});
 
     const tbody = document.createElement("tbody");
     hours.forEach(hour => {
@@ -54,16 +58,26 @@ document.addEventListener("DOMContentLoaded", () => {
       row.appendChild(timeCell);
 
       dates.forEach(d => {
-        const cell = document.createElement("td");
-        cell.textContent = "◎";
-        cell.classList.add("available");
-        cell.addEventListener("click", () => {
-          formEl.classList.remove("hidden");
-          formEl.textContent = `${d.label} ${hour} を選択しました`;
-        });
-        row.appendChild(cell);
-      });
+  const cell = document.createElement("td");
 
+  // ?? 仮のロジック：偶数時間は×、奇数時間は◎（後でスプレッドシート連携予定）
+  const hourNum = parseInt(hour.split(":")[0]);
+  const isAvailable = hourNum % 2 === 1;
+
+  if (isAvailable) {
+    cell.textContent = "◎";
+    cell.classList.add("available");
+    cell.addEventListener("click", () => {
+      formEl.classList.remove("hidden");
+      formEl.textContent = `${d.label} ${hour} を選択しました`;
+    });
+  } else {
+    cell.textContent = "×";
+    cell.classList.add("unavailable");
+  }
+
+  row.appendChild(cell);
+});
       tbody.appendChild(row);
     });
     table.appendChild(tbody);
