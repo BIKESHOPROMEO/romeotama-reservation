@@ -8,18 +8,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
-  function generateDates(offset) {
-    const today = new Date();
-    today.setDate(today.getDate() + offset * 7);
-    return [...Array(7)].map((_, i) => {
-      const d = new Date(today);
-      d.setDate(today.getDate() + i);
-      return {
-        date: d.toISOString().split("T")[0],
-        label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
-      };
-    });
-  }
+ function generateDates(offset) {
+  const today = new Date();
+  const currentDay = today.getDay(); // 0=日, 1=月, ..., 6=土
+  const sunday = new Date(today);
+  sunday.setDate(today.getDate() - currentDay + offset * 7); // 週の先頭（日曜）を算出
+
+  return [...Array(7)].map((_, i) => {
+    const d = new Date(sunday);
+    d.setDate(sunday.getDate() + i);
+    return {
+      date: d.toISOString().split("T")[0],
+      label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
+    };
+  });
+}
 
   function generateHours() {
     return [...Array(endHour - startHour + 1)].map((_, i) => `${startHour + i}:00`);
