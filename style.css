@@ -73,3 +73,32 @@ th, td {
   border: 1px solid #ffeeba;
   border-radius: 4px;
 }
+
+/* 既存のスタイルがここまであるとしたら… */
+
+/* ?? この下に追加してOK！ */
+#calendar {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+table {
+  border-collapse: collapse;
+  min-width: 700px;
+  width: max-content;
+}
+
+th, td {
+  border: 1px solid #ccc;
+  padding: 0.5em;
+  text-align: center;
+  white-space: nowrap;
+}
+
+td:first-child,
+th:first-child {
+  position: sticky;
+  left: 0;
+  background-color: #f0f0f0;
+  z-index: 2;
+}
