@@ -69,12 +69,16 @@ table.appendChild(thead);
   const isAvailable = hourNum % 2 === 1;
 
   if (isAvailable) {
-    cell.textContent = "◎";
-    cell.classList.add("available");
-    cell.addEventListener("click", () => {
-      formEl.classList.remove("hidden");
-      formEl.textContent = `${d.label} ${hour} を選択しました`;
-    });
+  cell.textContent = "◎";
+  cell.classList.add("available");
+  cell.addEventListener("click", () => {
+    // 選択した日時をURLパラメータで渡してフォームページへ遷移
+    const selectedDate = d.label;
+    const selectedTime = hour;
+    const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
+    window.location.href = url;
+  });
+
   } else {
     cell.textContent = "×";
     cell.classList.add("unavailable");
@@ -100,3 +104,5 @@ table.appendChild(thead);
 
   renderCalendar();
 });
+
+
