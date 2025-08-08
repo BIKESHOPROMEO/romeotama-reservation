@@ -1,6 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
   const calendarEl = document.getElementById("calendar");
-  const formEl = document.getElementById("form");
   const prevBtn = document.getElementById("prevWeek");
   const nextBtn = document.getElementById("nextWeek");
 
@@ -8,21 +7,21 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
- function generateDates(offset) {
-  const today = new Date();
-  const currentDay = today.getDay(); // 0=日, 1=月, ..., 6=土
-  const sunday = new Date(today);
-  sunday.setDate(today.getDate() - currentDay + offset * 7); // 週の先頭（日曜）を算出
+  function generateDates(offset) {
+    const today = new Date();
+    const currentDay = today.getDay();
+    const sunday = new Date(today);
+    sunday.setDate(today.getDate() - currentDay + offset * 7);
 
-  return [...Array(7)].map((_, i) => {
-    const d = new Date(sunday);
-    d.setDate(sunday.getDate() + i);
-    return {
-      date: d.toISOString().split("T")[0],
-      label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
-    };
-  });
-}
+    return [...Array(7)].map((_, i) => {
+      const d = new Date(sunday);
+      d.setDate(sunday.getDate() + i);
+      return {
+        date: d.toISOString().split("T")[0],
+        label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
+      };
+    });
+  }
 
   function generateHours() {
     return [...Array(endHour - startHour + 1)].map((_, i) => `${startHour + i}:00`);
@@ -32,28 +31,28 @@ document.addEventListener("DOMContentLoaded", () => {
     calendarEl.innerHTML = "";
     const dates = generateDates(weekOffset);
     const hours = generateHours();
+    const todayStr = new Date().toISOString().split("T")[0];
 
     const table = document.createElement("table");
+
+    // ヘッダー
     const thead = document.createElement("thead");
     const headerRow = document.createElement("tr");
     headerRow.appendChild(document.createElement("th"));
 
     dates.forEach(d => {
-  const th = document.createElement("th");
-  th.textContent = d.label;
+      const th = document.createElement("th");
+      th.textContent = d.label;
+      const dayOfWeek = new Date(d.date).getDay();
+      if (dayOfWeek === 0) th.classList.add("sunday");
+      else if (dayOfWeek === 6) th.classList.add("saturday");
+      headerRow.appendChild(th);
+    });
 
-  // ?? 曜日ごとにクラスを追加
-  const dayOfWeek = new Date(d.date).getDay();
-  if (dayOfWeek === 0) th.classList.add("sunday");     // 日曜
-  else if (dayOfWeek === 6) th.classList.add("saturday"); // 土曜
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
 
-  headerRow.appendChild(th);
-});
-
-thead.appendChild(headerRow); // ? これが必要！
-table.appendChild(thead);
-
-
+    // ボディ
     const tbody = document.createElement("tbody");
     hours.forEach(hour => {
       const row = document.createElement("tr");
@@ -62,32 +61,43 @@ table.appendChild(thead);
       row.appendChild(timeCell);
 
       dates.forEach(d => {
-  const cell = document.createElement("td");
+        const cell = document.createElement("td");
+        const hourNum = parseInt(hour.split(":")[0]);
+        const isAvailable = hourNum % 2 === 1;
 
-  // ?? 仮のロジック：偶数時間は×、奇数時間は◎（後でスプレッドシート連携予定）
-  const hourNum = parseInt(hour.split(":")[0]);
-  const isAvailable = hourNum % 2 === 1;
+        const isPast = d.date < todayStr;
+        const isToday = d.date === todayStr;
+        const isFuture = d.date > todayStr;
 
-  if (isAvailable) {
-  cell.textContent = "◎";
-  cell.classList.add("available");
-  cell.addEventListener("click", () => {
-    // 選択した日時をURLパラメータで渡してフォームページへ遷移
-    const selectedDate = d.label;
-    const selectedTime = hour;
-    const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
-    window.location.href = url;
-  });
+        if (isPast) {
+          cell.textContent = "×";
+          cell.classList.add("unavailable");
+        } else if (isToday) {
+          cell.textContent = "◎";
+          cell.classList.add("available");
+          cell.addEventListener("click", () => {
+            alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
+          });
+        } else if (isFuture && isAvailable) {
+          cell.textContent = "◎";
+          cell.classList.add("available");
+          cell.addEventListener("click", () => {
+            const selectedDate = d.label;
+            const selectedTime = hour;
+            const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
+            window.location.href = url;
+          });
+        } else {
+          cell.textContent = "×";
+          cell.classList.add("unavailable");
+        }
 
-  } else {
-    cell.textContent = "×";
-    cell.classList.add("unavailable");
-  }
+        row.appendChild(cell);
+      });
 
-  row.appendChild(cell);
-});
       tbody.appendChild(row);
     });
+
     table.appendChild(tbody);
     calendarEl.appendChild(table);
   }
@@ -104,5 +114,3 @@ table.appendChild(thead);
 
   renderCalendar();
 });
-
-
