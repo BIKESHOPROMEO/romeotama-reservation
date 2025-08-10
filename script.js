@@ -82,7 +82,7 @@ document.addEventListener("DOMContentLoaded", () => {
           cell.textContent = "◎";
           cell.classList.add("available");
           cell.addEventListener("click", () => {
-            const selectedDate = d.label;
+            const selectedDate = d.date;
             const selectedTime = hour;
             const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
             window.location.href = url;
