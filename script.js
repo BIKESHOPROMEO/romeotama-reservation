@@ -1,116 +1,69 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const calendarEl = document.getElementById("calendar");
-  const prevBtn = document.getElementById("prevWeek");
-  const nextBtn = document.getElementById("nextWeek");
+  // URLパラメータから選択された日時を取得
+  const params = new URLSearchParams(window.location.search);
+  const selectedDate = params.get("date");
+  const selectedTime = params.get("time");
 
-  const startHour = 10;
-  const endHour = 18;
-  let weekOffset = 0;
+  // 日付を「8/12(月)」形式に整形する関数
+  const formatDate = (isoDate) => {
+    const d = new Date(isoDate);
+    const days = ["日","月","火","水","木","金","土"];
+    return `${d.getMonth() + 1}/${d.getDate()}(${days[d.getDay()]})`;
+  };
 
-  function generateDates(offset) {
-    const today = new Date();
-    const currentDay = today.getDay();
-    const sunday = new Date(today);
-    sunday.setDate(today.getDate() - currentDay + offset * 7);
-
-    return [...Array(7)].map((_, i) => {
-      const d = new Date(sunday);
-      d.setDate(sunday.getDate() + i);
-      return {
-        date: d.toISOString().split("T")[0],
-        label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
-      };
-    });
+  // 表示処理
+  if (selectedDate && selectedTime) {
+    const formatted = `${formatDate(selectedDate)} ${selectedTime}`;
+    document.getElementById("selectedDateTime").textContent = formatted;
   }
 
-  function generateHours() {
-    return [...Array(endHour - startHour + 1)].map((_, i) => `${startHour + i}:00`);
-  }
+  // 送信ボタンのクリック処理
+  document.getElementById("submitBtn").addEventListener("click", function() {
+    this.disabled = true;
+    document.getElementById("sendingDialog").style.display = "block";
 
-  function renderCalendar() {
-    calendarEl.innerHTML = "";
-    const dates = generateDates(weekOffset);
-    const hours = generateHours();
-    const todayStr = new Date().toISOString().split("T")[0];
+    const form = document.getElementById("reservationForm");
+    const formData = new FormData(form);
+    const data = new URLSearchParams();
 
-    const table = document.createElement("table");
+    for (const [key, value] of formData.entries()) {
+      data.append(key, value);
+    }
 
-    // ヘッダー
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-    headerRow.appendChild(document.createElement("th"));
+    // 日時未選択チェック
+    if (!selectedDate || !selectedTime) {
+      alert("日付と時間が選択されていません");
+      this.disabled = false;
+      document.getElementById("sendingDialog").style.display = "none";
+      return;
+    }
 
-    dates.forEach(d => {
-      const th = document.createElement("th");
-      th.textContent = d.label;
-      const dayOfWeek = new Date(d.date).getDay();
-      if (dayOfWeek === 0) th.classList.add("sunday");
-      else if (dayOfWeek === 6) th.classList.add("saturday");
-      headerRow.appendChild(th);
+    // 送信データに日時を追加（ISO形式＋時間）
+    data.append("selectedDateTime", `${selectedDate} ${selectedTime}`);
+
+    // Google Apps Script へ送信
+    fetch("https://script.google.com/macros/s/AKfycbyE1-J7AqYT9v5SwHZtcC-SjH73CI11KG8jR0dES6fOkEMnZhvsx9gMplEHatxVNRaFaw/exec", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: data.toString()
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("sendingDialog").style.display = "none";
+      if (data.status === "success") {
+        alert(data.message); // 例："登録完了しました"
+        // 必要なら画面遷移など
+      } else {
+        this.disabled = false;
+        alert("送信に失敗しました：" + (data.error || "不明なエラー"));
+      }
+    })
+    .catch(err => {
+      document.getElementById("sendingDialog").style.display = "none";
+      this.disabled = false;
+      alert("通信エラーが発生しました");
     });
-
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    // ボディ
-    const tbody = document.createElement("tbody");
-    hours.forEach(hour => {
-      const row = document.createElement("tr");
-      const timeCell = document.createElement("td");
-      timeCell.textContent = hour;
-      row.appendChild(timeCell);
-
-      dates.forEach(d => {
-        const cell = document.createElement("td");
-        const hourNum = parseInt(hour.split(":")[0]);
-        const isAvailable = hourNum % 2 === 1;
-
-        const isPast = d.date < todayStr;
-        const isToday = d.date === todayStr;
-        const isFuture = d.date > todayStr;
-
-        if (isPast) {
-          cell.textContent = "×";
-          cell.classList.add("unavailable");
-        } else if (isToday) {
-          cell.textContent = "◎";
-          cell.classList.add("available");
-          cell.addEventListener("click", () => {
-            alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
-          });
-        } else if (isFuture && isAvailable) {
-          cell.textContent = "◎";
-          cell.classList.add("available");
-          cell.addEventListener("click", () => {
-            const selectedDate = d.date;
-            const selectedTime = hour;
-            const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
-            window.location.href = url;
-          });
-        } else {
-          cell.textContent = "×";
-          cell.classList.add("unavailable");
-        }
-
-        row.appendChild(cell);
-      });
-
-      tbody.appendChild(row);
-    });
-
-    table.appendChild(tbody);
-    calendarEl.appendChild(table);
-  }
-
-  prevBtn.addEventListener("click", () => {
-    weekOffset--;
-    renderCalendar();
   });
-
-  nextBtn.addEventListener("click", () => {
-    weekOffset++;
-    renderCalendar();
-  });
-
-  renderCalendar();
 });
