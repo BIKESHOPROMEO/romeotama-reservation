@@ -88,6 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
 		url.searchParams.set("date", selectedDate);
 		url.searchParams.set("time", selectedTime);
 		window.location.href = url.toString();
+	});
         } else {
           cell.textContent = "×";
           cell.classList.add("unavailable");
