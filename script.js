@@ -84,7 +84,7 @@ document.addEventListener("DOMContentLoaded", () => {
           cell.addEventListener("click", () => {
             const selectedDate = d.date;
             const selectedTime = hour;
-            const url = new URL("https://yoyaku-form-git-main-romeo-mobilitys-projects.vercel.app/");
+            const url = new URL("https://yoyaku-form.vercel.app/");
 		url.searchParams.set("date", selectedDate);
 		url.searchParams.set("time", selectedTime);
 		window.location.href = url.toString();
