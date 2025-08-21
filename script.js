@@ -84,9 +84,10 @@ document.addEventListener("DOMContentLoaded", () => {
           cell.addEventListener("click", () => {
             const selectedDate = d.date;
             const selectedTime = hour;
-            const url = `https://bikeshopromeo.github.io/yoyaku-form/?date=${encodeURIComponent(selectedDate)}&time=${encodeURIComponent(selectedTime)}`;
-            window.location.href = url;
-          });
+            const url = new URL("https://yoyaku-form.vercel.app/");
+		url.searchParams.set("date", selectedDate);
+		url.searchParams.set("time", selectedTime);
+		window.location.href = url.toString();
         } else {
           cell.textContent = "×";
           cell.classList.add("unavailable");
