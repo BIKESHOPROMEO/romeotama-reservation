@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
   let weekOffset = 0;
 
   async function fetchAvailability() {
-    const res = await fetch("api/calendar-availability");
+    const res = await fetch("/api/calendar-availability");
     availabilityData = await res.json();
   }
 
@@ -127,4 +127,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
   fetchAvailability().then(() => {
   renderCalendar();
+});
 });
