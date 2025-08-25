@@ -1,3 +1,5 @@
+let availabilityData = [];
+
 document.addEventListener("DOMContentLoaded", () => {
   const calendarEl = document.getElementById("calendar");
   const prevBtn = document.getElementById("prevWeek");
@@ -6,6 +8,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const startHour = 10;
   const endHour = 18;
   let weekOffset = 0;
+
+  async function fetchAvailability() {
+    const res = await fetch("/api/calendar-availability");
+    availabilityData = await res.json();
+  }
+
+  function isSlotAvailable(date, time) {
+    return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
+ }
 
   function generateDates(offset) {
     const today = new Date();
@@ -63,7 +74,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dates.forEach(d => {
         const cell = document.createElement("td");
         const hourNum = parseInt(hour.split(":")[0]);
-        const isAvailable = hourNum % 2 === 1;
+        const isAvailable = isSlotAvailable(d.date, hour);
 
         const isPast = d.date < todayStr;
         const isToday = d.date === todayStr;
@@ -114,5 +125,6 @@ document.addEventListener("DOMContentLoaded", () => {
     renderCalendar();
   });
 
+  fetchAvailability().then(() => {
   renderCalendar();
 });
