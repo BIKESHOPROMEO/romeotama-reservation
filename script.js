@@ -140,16 +140,16 @@ async function initializeCalendar() {
 document.addEventListener("DOMContentLoaded", () => {
   initializeCalendar();
 
-  prevBtn.addEventListener("click", () => {
-    weekOffset--;
-    await fetchAvailability();
-    renderCalendar();
-  });
+ prevBtn.addEventListener("click", async () => {
+  weekOffset--;
+  await fetchAvailability();
+  renderCalendar();
+});
 
-  nextBtn.addEventListener("click", () => {
-    weekOffset++;
-    await fetchAvailability();
-    renderCalendar();
-  });
+nextBtn.addEventListener("click", async () => {
+  weekOffset++;
+  await fetchAvailability();
+  renderCalendar();
+});
 });
 });
