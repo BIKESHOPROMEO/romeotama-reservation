@@ -139,7 +139,7 @@ async function initializeCalendar() {
   }
 }
 
-function setupEventListeners() {
+//function setupEventListeners() {
   prevBtn.addEventListener("click", async () => {
     weekOffset--;
     await fetchAvailability();
