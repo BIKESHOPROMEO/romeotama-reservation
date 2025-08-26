@@ -9,10 +9,14 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
+  try {
   async function fetchAvailability() {
     const res = await fetch("/api/calendar-availability");
     availabilityData = await res.json();
+  } catch (err) {
+    console.error("空き状況取得エラー:", err);
   }
+}
 
   function isSlotAvailable(date, time) {
     return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
@@ -137,13 +141,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   prevBtn.addEventListener("click", () => {
     weekOffset--;
-    await fetchAvailability();
+    awaitfetchAvailability();
     renderCalendar();
   });
 
   nextBtn.addEventListener("click", () => {
     weekOffset++;
-    await fetchAvailability();
+    awaitfetchAvailability();
     renderCalendar();
   });
 });
