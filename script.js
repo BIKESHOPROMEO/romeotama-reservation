@@ -18,7 +18,7 @@ if (!calendarEl) {
     try {
       const res = await fetch("/api/calendar-availability");
       const text = await res.text();
-      console.log("GASレスポンス:", text);
+      console.log("APIレスポンス:", text);
       availabilityData = JSON.parse(text);
     } catch (err) {
      console.error("空き状況取得エラー:", err);
