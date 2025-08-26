@@ -15,6 +15,7 @@ document.addEventListener("DOMContentLoaded", () => {
     availabilityData = await res.json();
   } catch (err) {
     console.error("空き状況取得エラー:", err);
+    availabilityData = [];
   }
 }
 
