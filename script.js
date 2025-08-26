@@ -139,7 +139,7 @@ async function initializeCalendar() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+//document.addEventListener("DOMContentLoaded", () => {
   initializeCalendar();
 
  prevBtn.addEventListener("click", async () => {
@@ -152,6 +152,5 @@ nextBtn.addEventListener("click", async () => {
   weekOffset++;
   await fetchAvailability();
   renderCalendar();
-});
 });
 });
