@@ -10,9 +10,11 @@ document.addEventListener("DOMContentLoaded", () => {
   let weekOffset = 0;
 
   async function fetchAvailability() {
-    try {
+  try {
     const res = await fetch("/api/calendar-availability");
-    availabilityData = await res.json();
+    const text = await res.text();
+    console.log("GASレスポンス:", text); // ← ここで中身を確認
+    availabilityData = JSON.parse(text);
   } catch (err) {
     console.error("空き状況取得エラー:", err);
     availabilityData = [];
