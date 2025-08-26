@@ -115,6 +115,26 @@ document.addEventListener("DOMContentLoaded", () => {
     calendarEl.appendChild(table);
   }
 
+async function initializeCalendar() {
+  await fetchAvailability();
+  if (availabilityData.length > 0) {
+    renderCalendar();
+  } else {
+    console.error("空き状況データが取得できませんでした");
+    calendarEl.innerHTML = "<p>空き状況の取得に失敗しました。</p>";
+	// ? ここに入れる！
+    calendarEl.innerHTML = `
+      <div class="error-message">
+        <p>現在、空き状況の取得に失敗しています。</p>
+        <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
+      </div>
+    `;
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  initializeCalendar();
+
   prevBtn.addEventListener("click", () => {
     weekOffset--;
     renderCalendar();
@@ -124,8 +144,4 @@ document.addEventListener("DOMContentLoaded", () => {
     weekOffset++;
     renderCalendar();
   });
-
-  fetchAvailability().then(() => {
-  renderCalendar();
-});
 });
