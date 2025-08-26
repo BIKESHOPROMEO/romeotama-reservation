@@ -9,8 +9,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
-  try {
   async function fetchAvailability() {
+    try {
     const res = await fetch("/api/calendar-availability");
     availabilityData = await res.json();
   } catch (err) {
