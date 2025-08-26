@@ -10,20 +10,20 @@ document.addEventListener("DOMContentLoaded", () => {
   let weekOffset = 0;
 
   async function fetchAvailability() {
-  try {
-    const res = await fetch("/api/calendar-availability");
-    const text = await res.text();
-    console.log("GASレスポンス:", text); // ← ここで中身を確認
-    availabilityData = JSON.parse(text);
-  } catch (err) {
-    console.error("空き状況取得エラー:", err);
-    availabilityData = [];
+    try {
+      const res = await fetch("/api/calendar-availability");
+      const text = await res.text();
+      console.log("GASレスポンス:", text);
+      availabilityData = JSON.parse(text);
+    } catch (err) {
+     console.error("空き状況取得エラー:", err);
+      availabilityData = [];
+    }
   }
-}
 
   function isSlotAvailable(date, time) {
     return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
- }
+  }
 
   function generateDates(offset) {
     const today = new Date();
@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", () => {
       d.setDate(sunday.getDate() + i);
       return {
         date: d.toISOString().split("T")[0],
-        label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
+        label: `${d.getMonth() + 1}/${d.getDate()}(${["日", "月", "火", "水", "木", "金", "土"][d.getDay()]})`
       };
     });
   }
@@ -80,12 +80,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
       dates.forEach(d => {
         const cell = document.createElement("td");
-        const hourNum = parseInt(hour.split(":")[0]);
         const isAvailable = isSlotAvailable(d.date, hour);
 
         const isPast = d.date < todayStr;
         const isToday = d.date === todayStr;
-        const isFuture = d.date > todayStr;
 
         if (isPast) {
           cell.textContent = "×";
@@ -96,22 +94,21 @@ document.addEventListener("DOMContentLoaded", () => {
           cell.addEventListener("click", () => {
             alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
           });
-        } else if (isFuture && isAvailable) {
+        } else if (isAvailable) {
           cell.textContent = "◎";
           cell.classList.add("available");
           cell.addEventListener("click", () => {
-            const selectedDate = d.date;
+             const selectedDate = d.date;
             const selectedTime = hour;
             const url = new URL("https://yoyaku-form.vercel.app/");
-		url.searchParams.set("date", selectedDate);
-		url.searchParams.set("time", selectedTime);
-		window.location.href = url.toString();
-	});
+            url.searchParams.set("date", selectedDate);
+            url.searchParams.set("time", selectedTime);
+            window.location.href = url.toString();
+          });
         } else {
           cell.textContent = "×";
           cell.classList.add("unavailable");
         }
-
         row.appendChild(cell);
       });
 
@@ -122,24 +119,23 @@ document.addEventListener("DOMContentLoaded", () => {
     calendarEl.appendChild(table);
   }
 
-async function initializeCalendar() {
-  await fetchAvailability();
-  if (availabilityData.length > 0) {
-    renderCalendar();
-  } else {
-    console.error("空き状況データが取得できませんでした");
-    calendarEl.innerHTML = "<p>空き状況の取得に失敗しました。</p>";
-	// ? ここに入れる！
-    calendarEl.innerHTML = `
-      <div class="error-message">
-        <p>現在、空き状況の取得に失敗しています。</p>
-        <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
-      </div>
-    `;
-  }
-}
+  async function initializeCalendar() {
+    await fetchAvailability();
+    if (availabilityData.length > 0) {
+      renderCalendar();
+    } else {
+      console.error("空き状況データが取得できませんでした");
+      calendarEl.innerHTML = `
+        <div class="error-message">
+            <p>現在、空き状況の取得に失敗しています。</p>
+          <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
+        </div>
+      `;
+    }
+ }
 
-//function setupEventListeners() {
+  initializeCalendar();
+
   prevBtn.addEventListener("click", async () => {
     weekOffset--;
     await fetchAvailability();
@@ -151,10 +147,4 @@ async function initializeCalendar() {
     await fetchAvailability();
     renderCalendar();
   });
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  initializeCalendar();
-  setupEventListeners();
-});
 });
