@@ -2,6 +2,11 @@ let availabilityData = [];
 
 document.addEventListener("DOMContentLoaded", () => {
   const calendarEl = document.getElementById("calendar");
+if (!calendarEl) {
+  console.error("calendarEl が見つかりません");
+  return;
+}
+
   const prevBtn = document.getElementById("prevWeek");
   const nextBtn = document.getElementById("nextWeek");
 
