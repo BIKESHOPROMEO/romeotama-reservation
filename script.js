@@ -141,13 +141,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   prevBtn.addEventListener("click", () => {
     weekOffset--;
-    awaitfetchAvailability();
+    await fetchAvailability();
     renderCalendar();
   });
 
   nextBtn.addEventListener("click", () => {
     weekOffset++;
-    awaitfetchAvailability();
+    await fetchAvailability();
     renderCalendar();
   });
 });
