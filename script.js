@@ -139,18 +139,22 @@ async function initializeCalendar() {
   }
 }
 
-//document.addEventListener("DOMContentLoaded", () => {
+function setupEventListeners() {
+  prevBtn.addEventListener("click", async () => {
+    weekOffset--;
+    await fetchAvailability();
+    renderCalendar();
+  });
+
+  nextBtn.addEventListener("click", async () => {
+    weekOffset++;
+    await fetchAvailability();
+    renderCalendar();
+  });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
   initializeCalendar();
-
- prevBtn.addEventListener("click", async () => {
-  weekOffset--;
-  await fetchAvailability();
-  renderCalendar();
-});
-
-nextBtn.addEventListener("click", async () => {
-  weekOffset++;
-  await fetchAvailability();
-  renderCalendar();
+  setupEventListeners();
 });
 });
