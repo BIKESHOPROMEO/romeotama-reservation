@@ -21,17 +21,19 @@ if (!calendarEl) {
         throw new Error(`HTTP error! status: ${res.status}`);
     }
     const data = await res.json();
-    console.log("APIレスポンス:", data);
-    availabilityData = data;
+    availabilityData = data; 
+    console.log("APIレスポンス:", availabilityData);
   } catch (err) {
     console.error("空き状況取得エラー:", err);
     availabilityData = [];
   }
 }
 
+
   function isSlotAvailable(date, time) {
-    return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
-  }
+  return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
+}
+
 
   function generateDates(offset) {
     const today = new Date();
@@ -133,17 +135,17 @@ if (!calendarEl) {
 
   async function initializeCalendar() {
     await fetchAvailability();
-    if (Array.isArray(availabilityData)) {
+    if (Array.isArray(availabilityData) && availabilityData.length > 0) {
   renderCalendar();
 } else {
   console.error("空き状況データが取得できませんでした");
   calendarEl.innerHTML = `
-        <div class="error-message">
-            <p>現在、空き状況の取得に失敗しています。</p>
-          <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
-        </div>
-      `;
-    }
+    <div class="error-message">
+      <p>現在、空き状況の取得に失敗しています。</p>
+      <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
+    </div>
+  `;
+}
  }
 
   initializeCalendar();
