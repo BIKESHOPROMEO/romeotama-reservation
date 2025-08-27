@@ -7,8 +7,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(`${GAS_URL}?action=availability`);
-    const text = await response.text();
-    const data = JSON.parse(text);
+    const data = await response.json(); // 直接JSONとしてパース
     return res.status(200).json(data);
   } catch (err) {
     return res.status(500).json({ message: "取得エラー", error: err.message });
