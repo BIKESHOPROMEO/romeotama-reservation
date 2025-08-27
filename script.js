@@ -20,14 +20,14 @@ if (!calendarEl) {
       if (!res.ok) {
         throw new Error(`HTTP error! status: ${res.status}`);
     }
-    const data = await res.json(); // 直接JSONオブジェクトを受け取る
-      console.log("APIレスポンス:", text);
-      availabilityData = JSON.parse(text);
-    } catch (err) {
-     console.error("空き状況取得エラー:", err);
-      availabilityData = [];
-    }
+    const data = await res.json();
+    console.log("APIレスポンス:", data);
+    availabilityData = data;
+  } catch (err) {
+    console.error("空き状況取得エラー:", err);
+    availabilityData = [];
   }
+}
 
   function isSlotAvailable(date, time) {
     return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
