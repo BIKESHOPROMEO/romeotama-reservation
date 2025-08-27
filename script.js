@@ -17,7 +17,10 @@ if (!calendarEl) {
   async function fetchAvailability() {
     try {
       const res = await fetch("/api/calendar-availability");
-      const text = await res.text();
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    const data = await res.json(); // 直接JSONオブジェクトを受け取る
       console.log("APIレスポンス:", text);
       availabilityData = JSON.parse(text);
     } catch (err) {
