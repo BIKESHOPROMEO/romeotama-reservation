@@ -31,7 +31,11 @@ if (!calendarEl) {
 
 
   function isSlotAvailable(date, time) {
-  return availabilityData.some(slot => slot.date === date && slot.time === time && slot.available);
+  return availabilityData.some(slot =>
+    slot.date === date &&
+    slot.time === time &&
+    (slot.available === true || String(slot.available).toLowerCase() === "true")
+  );
 }
 
 

@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 
     try {
       const data = JSON.parse(text); // ← 明示的にJSONとしてパース
-      return res.status(200).json(data);
+      return res.status(200).json({ slots: data });
     } catch (parseErr) {
       console.error("JSONパース失敗:", text);
       return res.status(500).json({ message: "JSONパース失敗", raw: text });
