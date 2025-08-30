@@ -74,24 +74,24 @@ th, td {
   border-radius: 4px;
 }
 
-/* æ—¢å­˜ã®ã‚¹ã‚¿ã‚¤ãƒ«ãŒã“ã“ã¾ã§ã‚ã‚‹ã¨ã—ãŸã‚‰â€¦ */
+/* Šù‘¶‚ÌƒXƒ^ƒCƒ‹‚ª‚±‚±‚Ü‚Å‚ ‚é‚Æ‚µ‚½‚çc */
 
-/* ?? ã“ã®ä¸‹ã«è¿½åŠ ã—ã¦OKï¼ */
-/* æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’è¨±å¯ã™ã‚‹ãƒ©ãƒƒãƒ‘ãƒ¼ */
-/* æ¨ªã‚¹ã‚¯ãƒ­ãƒ¼ãƒ«ã‚’è¨±å¯ã™ã‚‹ãƒ©ãƒƒãƒ‘ãƒ¼ */
+/* ?? ‚±‚Ì‰º‚É’Ç‰Á‚µ‚ÄOKI */
+/* ‰¡ƒXƒNƒ[ƒ‹‚ğ‹–‰Â‚·‚éƒ‰ƒbƒp[ */
+/* ‰¡ƒXƒNƒ[ƒ‹‚ğ‹–‰Â‚·‚éƒ‰ƒbƒp[ */
 #calendar {
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
 }
 
-/* ãƒ†ãƒ¼ãƒ–ãƒ«å…¨ä½“ã®ã‚¹ã‚¿ã‚¤ãƒ« */
+/* ƒe[ƒuƒ‹‘S‘Ì‚ÌƒXƒ^ƒCƒ‹ */
 #calendar table {
   border-collapse: collapse;
   width: max-content;
   min-width: 700px;
 }
 
-/* ã‚»ãƒ«ã®åŸºæœ¬ã‚¹ã‚¿ã‚¤ãƒ« */
+/* ƒZƒ‹‚ÌŠî–{ƒXƒ^ƒCƒ‹ */
 #calendar th, #calendar td {
   border: 1px solid #ccc;
   padding: 0.5em;
@@ -99,7 +99,7 @@ th, td {
   white-space: nowrap;
 }
 
-/* æ™‚é–“åˆ—ï¼ˆå·¦ç«¯ï¼‰ã‚’å›ºå®š */
+/* ŠÔ—ñi¶’[j‚ğŒÅ’è */
 #calendar th:first-child,
 #calendar td:first-child {
   position: sticky;
@@ -120,4 +120,17 @@ th.sunday {
 
 th.saturday {
   color: blue;
+}
+
+/* “Ç‚İ‚İ’†‚Ì•\¦ƒXƒ^ƒCƒ‹ */
+#calendar.loading::before {
+  content: "“Ç‚İ‚İ’†...";
+  display: block;
+  text-align: center;
+  padding: 1em;
+  font-weight: bold;
+  color: #666;
+  background-color: #fff;
+  border: 1px dashed #ccc;
+  margin-bottom: 1em;
 }

@@ -60,6 +60,7 @@ if (!calendarEl) {
   }
 
   function renderCalendar() {
+    calendarEl.classList.add("loading"); // ← ここ追加！
     calendarEl.innerHTML = "";
     const dates = generateDates(weekOffset);
     const hours = generateHours();
@@ -135,6 +136,7 @@ if (!calendarEl) {
 
     table.appendChild(tbody);
     calendarEl.appendChild(table);
+    calendarEl.classList.remove("loading"); // ← ここ追加！
   }
 
   async function initializeCalendar() {
