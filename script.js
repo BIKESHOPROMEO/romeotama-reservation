@@ -14,14 +14,15 @@ if (!calendarEl) {
   const endHour = 18;
   let weekOffset = 0;
 
-  async function fetchAvailability() {
-    try {
-      const res = await fetch("/api/calendar-availability");
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
+  // script.js (修正後)
+async function fetchAvailability() {
+  try {
+    const res = await fetch("/api/calendar-availability");
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
     }
-    const data = await res.json();
-    availabilityData = data; 
+    const { slots } = await res.json(); // <-- ここで slots を取得
+    availabilityData = slots; // <-- slots 配列を代入
     console.log("APIレスポンス:", availabilityData);
   } catch (err) {
     console.error("空き状況取得エラー:", err);
