@@ -17,7 +17,7 @@ if (!calendarEl) {
   // script.js (修正後)
 async function fetchAvailability() {
   try {
-    const res = await fetch("/api/calendar-availability");
+    const res = await fetch("/api/calendar-ava");
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`);
     }
