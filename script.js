@@ -35,10 +35,11 @@ async function fetchAvailability() {
   return availabilityData.some(slot =>
     slot.date === date &&
     slot.time === time &&
-    (slot.available === true || String(slot.available).toLowerCase() === "true")
+    (slot.available === true ||
+     String(slot.available).toLowerCase() === "true" ||
+     slot.available === "◎")
   );
 }
-
 
   function generateDates(offset) {
     const today = new Date();
