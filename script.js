@@ -7,6 +7,15 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
+   try {
+    const response = await fetch("/api/calendar-ava", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(data),
+});
+
   function generateDates(offset) {
     const today = new Date();
     const currentDay = today.getDay();
