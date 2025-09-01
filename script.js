@@ -7,14 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const endHour = 18;
   let weekOffset = 0;
 
-   try {
-    const response = await fetch("/api/calendar-ava", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify(data),
-});
+
 
   function generateDates(offset) {
     const today = new Date();
@@ -36,92 +29,66 @@ document.addEventListener("DOMContentLoaded", () => {
     return [...Array(endHour - startHour + 1)].map((_, i) => `${startHour + i}:00`);
   }
 
-  function renderCalendar() {
-    calendarEl.innerHTML = "";
-    const dates = generateDates(weekOffset);
-    const hours = generateHours();
-    const todayStr = new Date().toISOString().split("T")[0];
+  async function renderCalendar() {
+  calendarEl.innerHTML = "";
+  const dates = generateDates(weekOffset);
+  const hours = generateHours();
+  const todayStr = new Date().toISOString().split("T")[0];
 
-    const table = document.createElement("table");
+  const response = await fetch("/api/calendar-ava");
+  const result = await response.json();
+  const availableSlots = result.slots;
 
-    // ヘッダー
-    const thead = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-    headerRow.appendChild(document.createElement("th"));
+  const table = document.createElement("table");
+
+  // ヘッダー生成（省略）
+
+  const tbody = document.createElement("tbody");
+  hours.forEach(hour => {
+    const row = document.createElement("tr");
+    const timeCell = document.createElement("td");
+    timeCell.textContent = hour;
+    row.appendChild(timeCell);
 
     dates.forEach(d => {
-      const th = document.createElement("th");
-      th.textContent = d.label;
-      const dayOfWeek = new Date(d.date).getDay();
-      if (dayOfWeek === 0) th.classList.add("sunday");
-      else if (dayOfWeek === 6) th.classList.add("saturday");
-      headerRow.appendChild(th);
-    });
+      const cell = document.createElement("td");
+      const isPast = d.date < todayStr;
+      const isToday = d.date === todayStr;
+      const isFuture = d.date > todayStr;
 
-    thead.appendChild(headerRow);
-    table.appendChild(thead);
-
-    // ボディ
-    const tbody = document.createElement("tbody");
-    hours.forEach(hour => {
-      const row = document.createElement("tr");
-      const timeCell = document.createElement("td");
-      timeCell.textContent = hour;
-      row.appendChild(timeCell);
-
-      dates.forEach(d => {
-        const cell = document.createElement("td");
-        const hourNum = parseInt(hour.split(":")[0]);
-        const isAvailable = hourNum % 2 === 1;
-
-        const isPast = d.date < todayStr;
-        const isToday = d.date === todayStr;
-        const isFuture = d.date > todayStr;
-
-        if (isPast) {
-          cell.textContent = "×";
-          cell.classList.add("unavailable");
-        } else if (isToday) {
-          cell.textContent = "◎";
-          cell.classList.add("available");
-          cell.addEventListener("click", () => {
-            alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
-          });
-        } else if (isFuture && isAvailable) {
-          cell.textContent = "◎";
-          cell.classList.add("available");
-          cell.addEventListener("click", () => {
-            const selectedDate = d.date;
-            const selectedTime = hour;
-            const url = new URL("https://yoyaku-form.vercel.app/");
-		url.searchParams.set("date", selectedDate);
-		url.searchParams.set("time", selectedTime);
-		window.location.href = url.toString();
-	});
-        } else {
-          cell.textContent = "×";
-          cell.classList.add("unavailable");
-        }
-
-        row.appendChild(cell);
+      const isAvailable = availableSlots.some(slot => {
+        return slot.date === d.date && slot.time === hour;
       });
 
-      tbody.appendChild(row);
+      if (isPast) {
+        cell.textContent = "×";
+        cell.classList.add("unavailable");
+      } else if (isToday) {
+        cell.textContent = "◎";
+        cell.classList.add("available");
+        cell.addEventListener("click", () => {
+          alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
+        });
+      } else if (isFuture && isAvailable) {
+        cell.textContent = "◎";
+        cell.classList.add("available");
+        cell.addEventListener("click", () => {
+          const url = new URL("https://yoyaku-form.vercel.app/");
+          url.searchParams.set("date", d.date);
+          url.searchParams.set("time", hour);
+          window.location.href = url.toString();
+        });
+      } else {
+        cell.textContent = "×";
+        cell.classList.add("unavailable");
+      }
+
+      row.appendChild(cell);
     });
 
-    table.appendChild(tbody);
-    calendarEl.appendChild(table);
-  }
-
-  prevBtn.addEventListener("click", () => {
-    weekOffset--;
-    renderCalendar();
+    tbody.appendChild(row);
   });
 
-  nextBtn.addEventListener("click", () => {
-    weekOffset++;
-    renderCalendar();
-  });
-
-  renderCalendar();
-});
+  table.appendChild(tbody);
+  calendarEl.appendChild(table);
+}
