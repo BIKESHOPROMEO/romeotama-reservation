@@ -1,45 +1,11 @@
-let availabilityData = [];
-
 document.addEventListener("DOMContentLoaded", () => {
   const calendarEl = document.getElementById("calendar");
-if (!calendarEl) {
-  console.error("calendarEl が見つかりません");
-  return;
-}
-
   const prevBtn = document.getElementById("prevWeek");
   const nextBtn = document.getElementById("nextWeek");
 
   const startHour = 10;
   const endHour = 18;
   let weekOffset = 0;
-
-  // script.js (修正後)
-async function fetchAvailability() {
-  try {
-    const res = await fetch("/api/calendar-ava");
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-    const { slots } = await res.json(); // <-- ここで slots を取得
-    availabilityData = slots; // <-- slots 配列を代入
-    console.log("APIレスポンス:", availabilityData);
-  } catch (err) {
-    console.error("空き状況取得エラー:", err);
-    availabilityData = [];
-  }
-}
-
-
-  function isSlotAvailable(date, time) {
-  return availabilityData.some(slot =>
-    slot.date === date &&
-    slot.time === time &&
-    (slot.available === true ||
-     String(slot.available).toLowerCase() === "true" ||
-     slot.available === "◎")
-  );
-}
 
   function generateDates(offset) {
     const today = new Date();
@@ -52,7 +18,7 @@ async function fetchAvailability() {
       d.setDate(sunday.getDate() + i);
       return {
         date: d.toISOString().split("T")[0],
-        label: `${d.getMonth() + 1}/${d.getDate()}(${["日", "月", "火", "水", "木", "金", "土"][d.getDay()]})`
+        label: `${d.getMonth() + 1}/${d.getDate()}(${["日","月","火","水","木","金","土"][d.getDay()]})`
       };
     });
   }
@@ -62,7 +28,6 @@ async function fetchAvailability() {
   }
 
   function renderCalendar() {
-    calendarEl.classList.add("loading"); // ← ここ追加！
     calendarEl.innerHTML = "";
     const dates = generateDates(weekOffset);
     const hours = generateHours();
@@ -97,39 +62,38 @@ async function fetchAvailability() {
 
       dates.forEach(d => {
         const cell = document.createElement("td");
-        const isAvailable = isSlotAvailable(d.date, hour);
+        const hourNum = parseInt(hour.split(":")[0]);
+        const isAvailable = hourNum % 2 === 1;
 
         const isPast = d.date < todayStr;
         const isToday = d.date === todayStr;
+        const isFuture = d.date > todayStr;
 
         if (isPast) {
           cell.textContent = "×";
           cell.classList.add("unavailable");
-        } else if (isToday && isAvailable) {
-  	cell.textContent = "◎";
-  	cell.classList.add("available");
-  	cell.addEventListener("click", () => {
-   	 alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
-  	});
-	} else if (isToday && !isAvailable) {
-  	cell.textContent = "×";
-  	cell.classList.add("unavailable");
-
-        } else if (isAvailable) {
+        } else if (isToday) {
           cell.textContent = "◎";
           cell.classList.add("available");
           cell.addEventListener("click", () => {
-             const selectedDate = d.date;
+            alert("【本日の予約は直接店舗へお電話にてお問い合わせ下さい】");
+          });
+        } else if (isFuture && isAvailable) {
+          cell.textContent = "◎";
+          cell.classList.add("available");
+          cell.addEventListener("click", () => {
+            const selectedDate = d.date;
             const selectedTime = hour;
             const url = new URL("https://yoyaku-form.vercel.app/");
-            url.searchParams.set("date", selectedDate);
-            url.searchParams.set("time", selectedTime);
-            window.location.href = url.toString();
-          });
+		url.searchParams.set("date", selectedDate);
+		url.searchParams.set("time", selectedTime);
+		window.location.href = url.toString();
+	});
         } else {
           cell.textContent = "×";
           cell.classList.add("unavailable");
         }
+
         row.appendChild(cell);
       });
 
@@ -138,35 +102,17 @@ async function fetchAvailability() {
 
     table.appendChild(tbody);
     calendarEl.appendChild(table);
-    calendarEl.classList.remove("loading"); // ← ここ追加！
   }
 
-  async function initializeCalendar() {
-    await fetchAvailability();
-    if (Array.isArray(availabilityData) && availabilityData.length > 0) {
-  renderCalendar();
-} else {
-  console.error("空き状況データが取得できませんでした");
-  calendarEl.innerHTML = `
-    <div class="error-message">
-      <p>現在、空き状況の取得に失敗しています。</p>
-      <p>時間をおいて再度アクセスいただくか、店舗までお問い合わせください。</p>
-    </div>
-  `;
-}
- }
-
-  initializeCalendar();
-
-  prevBtn.addEventListener("click", async () => {
+  prevBtn.addEventListener("click", () => {
     weekOffset--;
-    await fetchAvailability();
     renderCalendar();
   });
 
-  nextBtn.addEventListener("click", async () => {
+  nextBtn.addEventListener("click", () => {
     weekOffset++;
-    await fetchAvailability();
     renderCalendar();
   });
+
+  renderCalendar();
 });
